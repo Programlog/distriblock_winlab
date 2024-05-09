@@ -29,6 +29,7 @@ Speechbrain contains pre-trained models that can be used to generate adversarial
   
 ### Adversarial attacks
 To generate Adversarial Examples, we utilized [RobustSpeech](https://github.com/RaphaelOlivier/robust_speech), a repository that contains a PyTorch implementation of all considered attacks in our paper.
+Please refer to their website for instructions on how to generate adversarial examples. 
 
 ## Computing Characteristics
 
