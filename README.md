@@ -8,6 +8,12 @@ We propose DistriBlock, a novel detection method for adversarial attacks on neur
 We analyze a variety of fully integrated PyTorch-based deep learning E2E speech engines using [SpeechBrain](https://github.com/speechbrain/speechbrain). Please refer to their website for instructions on how to install it.
 We perform evaluations of our detectors using an NVIDIA A40 GPU with 48 GB of memory, along with ASR recipes from SpeechBrain version 0.5.14.
 
+### Datasets
+We use the following large-scale speech corpus:
+* [LibriSpeech (English)](https://www.openslr.org/12)
+* [Aishell (Chinese Mandarin)](https://www.openslr.org/33/)
+* [Common Voice 6.1 (German and Italian)](https://commonvoice.mozilla.org/en/datasets)
+
 ### Pre-trained models
 Speechbrain contains pre-trained models that can be used to generate adversarial examples and test our defense strategy:
 * [CRDNN with CTC/Attention trained on CommonVoice Italian](https://huggingface.co/speechbrain/asr-crdnn-commonvoice-it)
@@ -17,10 +23,8 @@ Speechbrain contains pre-trained models that can be used to generate adversarial
 * [Transformer trained on Aishell](https://huggingface.co/speechbrain/asr-transformer-aishell)
 * [Transformer trained on LibriSpeech](https://huggingface.co/speechbrain/asr-transformer-transformerlm-librispeech)
   
-### Datasets
-
 ### Adversarial attacks
-To generate the Adversarial Examples, we utilized [RobustSpeech](https://github.com/RaphaelOlivier/robust_speech) repository that contains a PyTorch implementation of all considered attacks.
+To generate Adversarial Examples, we utilized [RobustSpeech](https://github.com/RaphaelOlivier/robust_speech), a repository that contains a PyTorch implementation of all considered attacks in our paper.
 
 ## Computing Characteristics
 
