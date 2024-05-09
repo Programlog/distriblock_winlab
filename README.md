@@ -19,7 +19,7 @@ We use the following large-scale speech corpus:
 * [Common Voice 6.1 (German and Italian)](https://commonvoice.mozilla.org/en/datasets)
 
 ### Pre-trained models
-Speechbrain contains pre-trained models that can be used to generate adversarial examples and test our defense strategy:
+Speechbrain contains pre-trained models that can be used to generate adversarial examples and to test our defense strategy:
 * [CRDNN with CTC/Attention trained on CommonVoice Italian](https://huggingface.co/speechbrain/asr-crdnn-commonvoice-it)
 * [CRDNN with CTC/Attention trained on LibriSpeech](https://huggingface.co/speechbrain/asr-crdnn-rnnlm-librispeech)
 * [wav2vec 2.0 with CTC trained on Aishell](https://huggingface.co/speechbrain/asr-wav2vec2-ctc-aishell)
