@@ -11,7 +11,7 @@ We perform evaluations of our detectors using an NVIDIA A40 GPU with 48 GB of me
 ### Datasets
 
 ### Adversarial attacks
-To generate the Adversarial Examples, we utilized [RobustSpeech]([https://github.com/speechbrain/speechbrain](https://github.com/RaphaelOlivier/robust_speech)) repository that contains a PyTorch implementation of all considered attacks.
+To generate the Adversarial Examples, we utilized [RobustSpeech](https://github.com/RaphaelOlivier/robust_speech) repository that contains a PyTorch implementation of all considered attacks.
 
 ### Pre-trained models
 
