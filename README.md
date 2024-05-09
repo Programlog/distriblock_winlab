@@ -2,6 +2,7 @@
 
 We propose DistriBlock, a novel detection method for adversarial attacks on neural network-based ASR systems. 
 We show that characteristics of the distribution over the output tokens can serve as features of binary classifiers.
+
 A demo with a selection of benign, adversarial, and noisy data employed in our experiments is available online [DistriBlock Demo](https://matiuste.github.io/Distriblock_demo/)
 
 ![logo](resources/Detector_diagram_3.png)
