@@ -4,10 +4,12 @@ We propose DistriBlock, a novel detection method for adversarial attacks on neur
 
 ![logo](resources/Detector_diagram_3.png)
 
+## Prerequisites
+We analyze a variety of fully integrated PyTorch-based deep learning E2E speech engines using [SpeechBrain](https://github.com/speechbrain/speechbrain). Please refer to their website for instructions on how to install it.
 
-## Datasets
+### Datasets
 
-## Pre-trained models
+### Pre-trained models
 
 ## Computing Characteristics
 
