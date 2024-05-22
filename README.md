@@ -31,15 +31,6 @@ We use the following large-scale speech corpus:
 * [Aishell (Chinese Mandarin)](https://www.openslr.org/33/)
 * [Common Voice 6.1 (German and Italian)](https://commonvoice.mozilla.org/en/datasets)
 
-    .
-    ├── build                   # Compiled files (alternatively `dist`)
-    ├── docs                    # Documentation files (alternatively `doc`)
-    ├── src                     # Source files (alternatively `lib` or `app`)
-    ├── test                    # Automated tests (alternatively `spec` or `tests`)
-    ├── tools                   # Tools and utilities
-    ├── LICENSE
-    └── README.md
-  
 #### 3. Pre-trained ASR models
 Speechbrain contains pre-trained models that can be used to generate adversarial examples and to test our defense strategy:
 * [CRDNN with CTC/Attention trained on CommonVoice Italian](https://huggingface.co/speechbrain/asr-crdnn-commonvoice-it)
@@ -53,6 +44,30 @@ Speechbrain contains pre-trained models that can be used to generate adversarial
 To generate Adversarial Examples, we utilized [RobustSpeech](https://github.com/RaphaelOlivier/robust_speech), a repository that contains a PyTorch implementation of all considered attacks in our paper.
 Please refer to their website for instructions on how to generate adversarial examples. 
 
-## Computing Characteristics
+As an example, csv files for Librispeech corpus and its corresponding CW adversarial attack, along with the target transcription, are provided in the results folder. These files can also be used to generate the adversarial examples. 
+The data should be stored using the following folder structure:
+```
+data_set
+└──librispeech
+    ├── test-clean
+    ├── cw
+    ├── ...
+└──aishell
+    ├── test-clean
+    ├── cw
+    ├── ...
+└──cv-italian
+    ├── test-clean
+    ├── cw
+    ├── ...
+└──cv-german
+    ├── test-clean
+    ├── cw
+    ├── ...
+```
+## Running the experiments
+The scripts below have been tested to run on a Transformer ASR model trained on LibriSpeech. You can download the pretrained model from [here](https://ruhr-uni-bochum.sciebo.de/s/lpjW0vxFikG2WqD). These scripts can be easily adjusted for any SpeechBrain receipe. 
 
-## Building binary Classifiers
+### Computing Characteristics
+
+### Building binary Classifiers
