@@ -32,7 +32,7 @@ We use the following large-scale speech corpus:
 * [Common Voice 6.1 (German and Italian)](https://commonvoice.mozilla.org/en/datasets)
 
 #### 3. Download pre-trained ASR models
-We provide our [pre-trained models](https://ruhr-uni-bochum.sciebo.de/s/lpjW0vxFikG2WqD) to generate adversarial examples and to test our Distriblock defense strategy.
+We provide our [pre-trained models](https://ruhr-uni-bochum.sciebo.de/s/lpjW0vxFikG2WqD) that can be used to generate adversarial examples and to test our Distriblock defense strategy.
 In addition, Speechbrain contains pre-trained models that can also be used:
 * [CRDNN with CTC/Attention trained on CommonVoice Italian](https://huggingface.co/speechbrain/asr-crdnn-commonvoice-it)
 * [CRDNN with CTC/Attention trained on LibriSpeech](https://huggingface.co/speechbrain/asr-crdnn-rnnlm-librispeech)
