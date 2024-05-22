@@ -5,7 +5,7 @@ We show that characteristics of the distribution over the output tokens can serv
 
 ![logo](resources/Detector_diagram_3.png)
 
-A demo with a selection of benign, adversarial, and noisy data employed in our experiments is available online [DistriBlock Demo](https://matiuste.github.io/Distriblock_demo/)
+This paper [DistriBlock: Identifying adversarial audio samples by leveraging characteristics of the output distribution](https://arxiv.org/abs/2305.17000) has been accepted to UAI 2024. A demo with a selection of benign, adversarial, and noisy data employed in our experiments is available online [DistriBlock Demo](https://matiuste.github.io/Distriblock_demo/)
 > Adversarial attacks can mislead automatic speech recognition (ASR) systems into predicting an arbitrary target text, thus posing a clear security threat.
 > To prevent such attacks, we propose DistriBlock, an efficient detection strategy applicable to any ASR system that predicts a probability distribution over output tokens in each time step.
 > We measure a set of characteristics of this distribution: the median, maximum, and minimum over the output probabilities, the entropy of the distribution, as well as the Kullback-Leibler and the Jensen-Shannon divergence with respect to the distributions of the subsequent time step. 
