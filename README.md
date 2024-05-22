@@ -95,11 +95,11 @@ Example for evaluating Distriblock defense against CW attack:
 python distriblock_classifiers.py DistriBlock_data DistriBlock_data/CW/
 ```
 ### Using filtering to preserve model robustness
-To evaluate LPF+SG filtering to preserve system robustness, run the following script:
+To evaluate Low-pass and Spectral-Gating filters to preserve system robustness, run the following script:
 ```
 python distriblock_filtering.py hparams/transformer.yaml
 ```
-Again, change the hyperparameters in the yaml file and csv files if testing another type of adversarial attack.
+Again, change the hyperparameters in the YAML file and CSV files if testing another type of adversarial attack.
 
 ### Citation
 If you find value in this repository, please consider citing the preprint of our paper:
