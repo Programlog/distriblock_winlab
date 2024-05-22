@@ -98,5 +98,15 @@ To evaluate LPF+SG filtering to preserve system robustness, run the following sc
 ```
 python distriblock_filtering.py hparams/transformer.yaml
 ```
-## Citation
-If you find this repository useful, please consider citing the preprint of our paper:
+### Citation
+If you find value in this repository, please consider citing the preprint of our paper:
+```
+@misc{pizarro202_4UAI,
+      title={DistriBlock: Identifying adversarial audio samples by leveraging characteristics of the output distribution}, 
+      author={Matías Pizarro and Dorothea Kolossa and Asja Fischer},
+      year={2024},
+      eprint={2305.17000},
+      archivePrefix={arXiv},
+      primaryClass={cs.SD}
+}
+```
