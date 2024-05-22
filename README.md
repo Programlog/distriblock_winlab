@@ -31,6 +31,15 @@ We use the following large-scale speech corpus:
 * [Aishell (Chinese Mandarin)](https://www.openslr.org/33/)
 * [Common Voice 6.1 (German and Italian)](https://commonvoice.mozilla.org/en/datasets)
 
+    .
+    ├── build                   # Compiled files (alternatively `dist`)
+    ├── docs                    # Documentation files (alternatively `doc`)
+    ├── src                     # Source files (alternatively `lib` or `app`)
+    ├── test                    # Automated tests (alternatively `spec` or `tests`)
+    ├── tools                   # Tools and utilities
+    ├── LICENSE
+    └── README.md
+  
 #### 3. Pre-trained ASR models
 Speechbrain contains pre-trained models that can be used to generate adversarial examples and to test our defense strategy:
 * [CRDNN with CTC/Attention trained on CommonVoice Italian](https://huggingface.co/speechbrain/asr-crdnn-commonvoice-it)
