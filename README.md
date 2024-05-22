@@ -66,8 +66,37 @@ data_set
     ├── ...
 ```
 ## Running the experiments
-The scripts below have been tested to run on a Transformer ASR model trained on LibriSpeech. You can download the pretrained model from [here](https://ruhr-uni-bochum.sciebo.de/s/lpjW0vxFikG2WqD). These scripts can be easily adjusted for any SpeechBrain receipe. 
+The scripts below have been tested on a Transformer ASR model trained on LibriSpeech. You can download the pretrained model from [here](https://ruhr-uni-bochum.sciebo.de/s/lpjW0vxFikG2WqD). These scripts can be easily adjusted for any SpeechBrain recipe. 
 
 ### Computing Characteristics
+To compute the characteristics of the output distribution run the script as follows:
+```
+python distriblock_characteristics.py hparams/transformer.yaml
+```
+We use the hyperparameter file just like in any SpeechBrain recipe. The default `attack_type` hyperparameter refers to the `CW` attack. Change this hyperparameter if testing another type of adversarial attack.
 
-### Building binary Classifiers
+### Building and evaluating binary classifiers
+The extracted characteristics of the output distribution are used as features for different binary classifiers. To train and evaluate the classifiers use:
+```
+python distriblock_classifiers.py -h
+
+usage: distriblock_classifiers.py [-h] FOLDER_ORIG FOLDER_ADV
+
+positional arguments:
+  FOLDER_ORIG  Folder path that contains the characteristics of the benign examples.
+  FOLDER_ADV   Folder path that contains the characteristics of the adversarial examples.```
+
+options:
+  -h, --help   show this help message and exit
+```
+Example for evaluating Distriblock defense against CW attack:
+```
+python distriblock_classifiers.py DistriBlock_data DistriBlock_data/CW/
+```
+### Using filtering to preserve model robustness
+To evaluate LPF+SG filtering to preserve system robustness, run the following script:
+```
+python distriblock_filtering.py hparams/transformer.yaml
+```
+## Citation
+If you find this repository useful, please consider citing the preprint of our paper:
