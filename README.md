@@ -45,7 +45,7 @@ In addition, Speechbrain contains pre-trained models that can also be used:
 To generate Adversarial Examples, we utilized [RobustSpeech](https://github.com/RaphaelOlivier/robust_speech), a repository that contains a PyTorch implementation of all considered attacks in our paper.
 Please refer to their website for instructions on how to generate adversarial examples. 
 
-As an example, csv files for Librispeech corpus and its corresponding CW adversarial attack, along with the target transcription, are provided in the results folder. These files can also be used to generate the adversarial examples. 
+As an example, csv files for Librispeech corpus and its corresponding CW adversarial examples, along with the target transcription, are provided in the results folder. These files can also be used to generate the adversarial examples. 
 The data should be stored using the following folder structure:
 ```
 data_set
@@ -67,14 +67,14 @@ data_set
     ├── ...
 ```
 ## Running the experiments
-The scripts below have been tested on a Transformer ASR model trained on LibriSpeech. You can download the pretrained model from [here](https://ruhr-uni-bochum.sciebo.de/s/lpjW0vxFikG2WqD). These scripts can be easily adjusted for any SpeechBrain recipe. 
+The scripts below have been tested on a Transformer ASR model trained on LibriSpeech. You can download the pre-trained model from [here](https://ruhr-uni-bochum.sciebo.de/s/lpjW0vxFikG2WqD). These scripts can be easily adjusted for any SpeechBrain recipe. 
 
 ### Computing Characteristics
 To compute the characteristics of the output distribution run the script as follows:
 ```
 python distriblock_characteristics.py hparams/transformer.yaml
 ```
-We use the hyperparameter file just like in any SpeechBrain recipe. The default `attack_type` hyperparameter refers to the `CW` attack. Change this hyperparameter if testing another type of adversarial attack.
+We use the hyperparameter file just like in any SpeechBrain recipe. The default `attack_type` hyperparameter refers to the `CW` attack. Change this hyperparameter and csv files if testing another type of adversarial attack.
 
 ### Building and evaluating binary classifiers
 The extracted characteristics of the output distribution are used as features for different binary classifiers. To train and evaluate the classifiers use:
@@ -99,6 +99,8 @@ To evaluate LPF+SG filtering to preserve system robustness, run the following sc
 ```
 python distriblock_filtering.py hparams/transformer.yaml
 ```
+Again, change the hyperparameters in the yaml file and csv files if testing another type of adversarial attack.
+
 ### Citation
 If you find value in this repository, please consider citing the preprint of our paper:
 ```
