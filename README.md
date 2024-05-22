@@ -13,20 +13,25 @@ A demo with a selection of benign, adversarial, and noisy data employed in our e
 > Through extensive analysis across different state-of-the-art ASR systems and language data sets, we demonstrate the supreme performance of this approach, with a mean area under the receiver operating characteristic curve for distinguishing target adversarial examples against clean and noisy data of 99\% and 97\%, respectively. 
 > To assess the robustness of our method, we show that adaptive adversarial examples that can circumvent DistriBlock are much noisier, which makes them easier to detect through filtering and creates another avenue for preserving the system's robustness.
 
-
-
 ## Prerequisites
+Before running the Distriblock scripts, the following tasked need to be completed:
+1. SpeechBrain
+2. Datasets
+3. Pre-trained ASR models
+4. Adversarial attacks
+   
+#### 1. SpeechBrain
 We analyze a variety of fully integrated PyTorch-based deep learning E2E speech engines using [SpeechBrain](https://github.com/speechbrain/speechbrain). 
 Please refer to their website for instructions on how to install it.
 We perform evaluations of our detectors using an NVIDIA A40 GPU with 48 GB of memory, along with ASR recipes from SpeechBrain version 0.5.14.
 
-### Datasets
+#### 2. Datasets
 We use the following large-scale speech corpus:
 * [LibriSpeech (English)](https://www.openslr.org/12)
 * [Aishell (Chinese Mandarin)](https://www.openslr.org/33/)
 * [Common Voice 6.1 (German and Italian)](https://commonvoice.mozilla.org/en/datasets)
 
-### Pre-trained models
+#### 3. Pre-trained ASR models
 Speechbrain contains pre-trained models that can be used to generate adversarial examples and to test our defense strategy:
 * [CRDNN with CTC/Attention trained on CommonVoice Italian](https://huggingface.co/speechbrain/asr-crdnn-commonvoice-it)
 * [CRDNN with CTC/Attention trained on LibriSpeech](https://huggingface.co/speechbrain/asr-crdnn-rnnlm-librispeech)
@@ -35,7 +40,7 @@ Speechbrain contains pre-trained models that can be used to generate adversarial
 * [Transformer trained on Aishell](https://huggingface.co/speechbrain/asr-transformer-aishell)
 * [Transformer trained on LibriSpeech](https://huggingface.co/speechbrain/asr-transformer-transformerlm-librispeech)
   
-### Adversarial attacks
+#### 4. Adversarial attacks
 To generate Adversarial Examples, we utilized [RobustSpeech](https://github.com/RaphaelOlivier/robust_speech), a repository that contains a PyTorch implementation of all considered attacks in our paper.
 Please refer to their website for instructions on how to generate adversarial examples. 
 
