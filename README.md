@@ -15,24 +15,25 @@ This paper [DistriBlock: Identifying adversarial audio samples by leveraging cha
 
 ## Prerequisites
 Before running the Distriblock scripts, the following tasks need to be completed:
-1. SpeechBrain
-2. Datasets
-3. Pre-trained ASR models
-4. Adversarial attacks
+1. SpeechBrain installation
+2. Download datasets
+3. Download pre-trained ASR models
+4. Generate adversarial examples
    
-#### 1. SpeechBrain
+#### 1. SpeechBrain installation
 We analyze a variety of fully integrated PyTorch-based deep learning E2E speech engines using [SpeechBrain](https://github.com/speechbrain/speechbrain). 
 Please refer to their website for instructions on how to install it.
 We perform evaluations of our detectors using an NVIDIA A40 GPU with 48 GB of memory, along with ASR recipes from SpeechBrain version 0.5.14.
 
-#### 2. Datasets
+#### 2. Download datasets
 We use the following large-scale speech corpus:
 * [LibriSpeech (English)](https://www.openslr.org/12)
 * [Aishell (Chinese Mandarin)](https://www.openslr.org/33/)
 * [Common Voice 6.1 (German and Italian)](https://commonvoice.mozilla.org/en/datasets)
 
-#### 3. Pre-trained ASR models
-Speechbrain contains pre-trained models that can be used to generate adversarial examples and to test our defense strategy:
+#### 3. Download pre-trained ASR models
+We provide our [pre-trained models](https://ruhr-uni-bochum.sciebo.de/s/lpjW0vxFikG2WqD) to generate adversarial examples and to test our Distriblock defense strategy.
+In addition, Speechbrain contains pre-trained models that can also be used:
 * [CRDNN with CTC/Attention trained on CommonVoice Italian](https://huggingface.co/speechbrain/asr-crdnn-commonvoice-it)
 * [CRDNN with CTC/Attention trained on LibriSpeech](https://huggingface.co/speechbrain/asr-crdnn-rnnlm-librispeech)
 * [wav2vec 2.0 with CTC trained on Aishell](https://huggingface.co/speechbrain/asr-wav2vec2-ctc-aishell)
