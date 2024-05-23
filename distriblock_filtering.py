@@ -255,7 +255,7 @@ if __name__ == "__main__":
         if not os.path.exists(filter_folder):
             os.makedirs(filter_folder)
         for k, data_ in enumerate(data_sets):
-            if not os.path.exists(f"{filter_folder}/{wer_files[k]}") or True:
+            if not os.path.exists(f"{filter_folder}/{wer_files[k]}"):
                 print("Filter method: \"{}\". Calculating WER/CER ... ".format(f_nm))
                 wer, cer = asr_performance(data_, f_nm)
                 with open(f"{filter_folder}/{wer_files[k]}", 'wb') as file:
