@@ -180,6 +180,7 @@ def newCER(x, y):
 
 def word_error_rate(reference, hypothesis):
     """
+    Credits: https://github.com/AI-secure/Characterizing-Audio-Adversarial-Examples-using-Temporal-Dependency
     Calculate Word-error-rate.
 
     :param reference: Reference text.
@@ -214,6 +215,7 @@ def word_error_rate(reference, hypothesis):
 
 def character_error_rate(reference, hypothesis):
     """
+    Credits: https://github.com/AI-secure/Characterizing-Audio-Adversarial-Examples-using-Temporal-Dependency
     Calculate character-error-rate.
 
     :param reference: Reference text.
