@@ -104,12 +104,11 @@ Again, change the hyperparameters in the YAML file and CSV files if testing anot
 ### Citation
 If you find value in this repository, please consider citing the preprint of our paper:
 ```bibtex
-@misc{pizarro202_4UAI,
-      title={DistriBlock: Identifying adversarial audio samples by leveraging characteristics of the output distribution}, 
-      author={Matías Pizarro and Dorothea Kolossa and Asja Fischer},
-      year={2024},
-      eprint={2305.17000},
-      archivePrefix={arXiv},
-      primaryClass={cs.SD}
+@inproceedings{
+Pizarro2024DistriBlock,
+title={DistriBlock: Identifying adversarial audio samples by leveraging characteristics of the output distribution},
+author={Matias Patricio Pizarro Bustamante and Dorothea Kolossa and Asja Fischer},
+booktitle={The 40th Conference on Uncertainty in Artificial Intelligence},
+year={2024},
 }
 ```
