@@ -107,7 +107,7 @@ If you find value in this repository, please consider citing the preprint of our
 @inproceedings{
 Pizarro2024DistriBlock,
 title={DistriBlock: Identifying adversarial audio samples by leveraging characteristics of the output distribution},
-author={Pizarro B., Matías P. and Kolossa, Dorothea and Fischer, Asja},
+author={Pizarro, Matías and Kolossa, Dorothea and Fischer, Asja},
 booktitle={The 40th Conference on Uncertainty in Artificial Intelligence},
 year={2024},
 }
