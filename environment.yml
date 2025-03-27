@@ -1,0 +1,128 @@
+# To create this environment:
+# conda env create -f environment.yml
+
+name: myenv # Choose a suitable name for your environment
+
+channels:
+  - nvidia   # <-- Add this channel FIRST
+  - pytorch
+  - defaults
+
+dependencies:
+  # --- Conda Packages ---
+  # Core
+  - python=3.10
+  - pip
+
+  # Numeric / Scientific
+  - blas=1.0 # Let conda choose appropriate build (e.g., mkl)
+  - intel-openmp # Let conda choose version
+  - joblib=1.2.0
+  - mkl # Let conda choose version
+  - mkl-service # Let conda choose version
+  - mkl_fft=1.3.6
+  - mkl_random=1.2.2
+  - numpy
+  - scikit-learn=1.3.0
+  - scipy=1.10.1 # Prefer conda scipy for MKL integration
+  - threadpoolctl=2.2.0
+
+  # PyTorch related (ensure CUDA version matches your system/needs)
+  - pytorch=1.13.1
+  - torchaudio=0.13.1
+  - torchvision=0.14.1 # Assuming this corresponds to pytorch 1.13.1
+  - pytorch-cuda=11.7 # Specifies the CUDA toolkit version for PyTorch builds
+
+  # Image/Audio/Video Processing
+  - ffmpeg=4.3
+  - freetype=2.12.1
+  - giflib=5.2.1
+  - jpeg=9e
+  - lame=3.100
+  - lcms2=2.12
+  - lerc=3.0
+  - libdeflate=1.17
+  - libpng=1.6.39
+  - libtiff=4.5.1
+  - libwebp-base=1.2.4 # Usually dependency of libwebp, but can keep if needed
+  - openh264=2.1.1
+  - pillow=9.4.0
+
+  # Security / Certificates / Networking
+  - brotlipy=0.7.0
+  - ca-certificates # Let conda choose version
+  - certifi # Let conda choose version
+  - cffi=1.15.1
+  - cryptography # Let conda choose version
+  - gnutls=3.6.15
+  - idna=3.4
+  - libidn2=2.3.4
+  - libtasn1=4.19.0
+  - nettle=3.7.3
+  - openssl=3.0 # Allow minor updates within 3.0
+  - pyopenssl=23.2.0
+  - pysocks=1.7.1
+  - requests=2.31.0
+  - urllib3=1.26.16
+
+  # Utilities / System / Build
+  - bzip2=1.0.8
+  - gmp=6.2.1
+  - libffi=3.4.4
+  - libiconv=1.16
+  - libunistring=0.9.10
+  - libuuid=1.41.5
+  - lz4-c=1.9.4
+  - ncurses=6.4
+  - pycparser=2.21
+  - readline=8.2
+  - setuptools=68.0.0
+  - sqlite=3.41.2
+  - tbb=2021.8.0
+  - tk=8.6.12
+  - typing_extensions=4.7.1
+  - tzdata # Let conda choose version
+  - wheel=0.38.4
+  - xz=5.4.2
+  - zlib=1.2.13
+  - zstd=1.5.5
+
+  # --- Pip Packages ---
+  - pip:
+    - audioread==3.0.0
+    - charset-normalizer==2.0.4
+    - contourpy==1.1.0
+    - cycler==0.11.0
+    - decorator==5.1.1
+    - filelock==3.12.1
+    - fonttools==4.42.1
+    - fsspec==2023.6.0
+    - huggingface-hub==0.15.1
+    - hyperpyyaml==1.2.1
+    - kiwisolver==1.4.5
+    - lazy-loader==0.3
+    - librosa==0.10.1
+    - llvmlite==0.40.1
+    - matplotlib==3.7.3
+    - msgpack==1.0.5
+    - noisereduce==3.0.0
+    - numba==0.57.1
+    - packaging==23.1
+    - platformdirs==3.10.0
+    - pooch==1.7.0
+    - pyparsing==3.1.1
+    - python-dateutil==2.8.2
+    - pyyaml==6.0
+    - regex==2023.6.3
+    - ruamel-yaml==0.17.28
+    - ruamel-yaml-clib==0.2.7
+    - safetensors==0.3.1
+    - sentencepiece==0.1.99
+    - six==1.16.0
+    - soundfile==0.12.1
+    - soxr==0.3.6
+    - speechbrain==0.5.14
+    - tokenizers==0.13.3
+    - tqdm==4.65.0
+    - transformers==4.30.1
+    # Note: Explicit torch/torchvision from pip omitted, relying on conda versions above
