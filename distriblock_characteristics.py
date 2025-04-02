@@ -47,6 +47,15 @@ class ASR(sb.core.Brain):
         # compute features
         feats = self.hparams.compute_features(wavs)
         current_epoch = self.hparams.epoch_counter.current
+
+        # Move all modules to the same device
+        self.modules.to(self.device)
+        # Move normalize statistics to the same device
+        if hasattr(self.modules.normalize, "glob_mean"):
+            self.modules.normalize.glob_mean = self.modules.normalize.glob_mean.to(self.device)
+        if hasattr(self.modules.normalize, "glob_std"):
+            self.modules.normalize.glob_std = self.modules.normalize.glob_std.to(self.device)
+
         feats = self.modules.normalize(feats, wav_lens, epoch=current_epoch)
 
         if stage == sb.Stage.TRAIN:
@@ -97,6 +106,11 @@ class ASR(sb.core.Brain):
         self.hparams.model.load_state_dict(ckpt, strict=True)"""
         self.hparams.model.eval()
         print("Loaded the average")
+
+    def no_checkpoint_average(self, max_key=None, min_key=None):
+         """Skip checkpoint averaging and use the pre-trained model directly"""
+         super().on_evaluate_start()
+         print("Skipping checkpoint averaging, using pre-trained model directly")
 
     def evaluate_batch(self, batch, stage):
         """Computations needed for validation/test batches"""
