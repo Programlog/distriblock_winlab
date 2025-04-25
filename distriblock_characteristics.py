@@ -30,113 +30,113 @@ logger = logging.getLogger(__name__)
 
 # Define training procedure
 class ASR(sb.core.Brain):
-def compute_characteristics(self, wavs, wav_lens, tokens_bos, measurements):
-    """
-    Computes characteristics metrics for the given input data.
-
-    Args:
-        wavs (torch.Tensor): Input waveforms.
-        wav_lens (torch.Tensor): Lengths of waveforms as a proportion of the max length.
-        tokens_bos (torch.Tensor): Tokens with beginning-of-sequence marker.
-        measurements (dict): Dictionary to store computed metrics.
-
-    Returns:
-        None
-    """
-    try:
-        # Compute features
-        feats = self.hparams.compute_features(wavs)
-        current_epoch = self.hparams.epoch_counter.current
-
-        # Move modules’ normalize statistics to the correct device if needed
-        self.modules.to(self.device)
-        if hasattr(self.modules.normalize, "glob_mean"):
-            self.modules.normalize.glob_mean = self.modules.normalize.glob_mean.to(self.device)
-        if hasattr(self.modules.normalize, "glob_std"):
-            self.modules.normalize.glob_std = self.modules.normalize.glob_std.to(self.device)
-
-        # Normalize features
-        feats = self.modules.normalize(feats, wav_lens, epoch=current_epoch)
-
-        # Forward pass through modules
-        src = self.modules.CNN(feats)
-        enc_out, pred = self.modules.Transformer(
-            src, tokens_bos, wav_lens, pad_idx=self.hparams.pad_index,
-        )
-        logits = self.modules.ctc_lin(enc_out)
-        p_ctc = self.hparams.log_softmax(logits)
-
-        # Convert log probabilities to probabilities safely
-        epsilon = 1e-10  # Small constant to avoid numerical issues
-        p_ctc_np = torch.exp(p_ctc).detach().cpu().numpy()
-        p_ctc_np = np.clip(p_ctc_np, epsilon, None)  # Ensure no zeros
-
-        # Normalize probabilities row-wise
-        row_sums = np.sum(p_ctc_np, axis=1, keepdims=True)
-        mask = row_sums < epsilon
-        if np.any(mask):
-            # Replace invalid rows with uniform distribution
-            uniform_prob = 1.0 / p_ctc_np.shape[1]
-            p_ctc_np[mask.flatten()] = uniform_prob
+    def compute_characteristics(self, wavs, wav_lens, tokens_bos, measurements):
+        """
+        Computes characteristics metrics for the given input data.
+    
+        Args:
+            wavs (torch.Tensor): Input waveforms.
+            wav_lens (torch.Tensor): Lengths of waveforms as a proportion of the max length.
+            tokens_bos (torch.Tensor): Tokens with beginning-of-sequence marker.
+            measurements (dict): Dictionary to store computed metrics.
+    
+        Returns:
+            None
+        """
+        try:
+            # Compute features
+            feats = self.hparams.compute_features(wavs)
+            current_epoch = self.hparams.epoch_counter.current
+    
+            # Move modules’ normalize statistics to the correct device if needed
+            self.modules.to(self.device)
+            if hasattr(self.modules.normalize, "glob_mean"):
+                self.modules.normalize.glob_mean = self.modules.normalize.glob_mean.to(self.device)
+            if hasattr(self.modules.normalize, "glob_std"):
+                self.modules.normalize.glob_std = self.modules.normalize.glob_std.to(self.device)
+    
+            # Normalize features
+            feats = self.modules.normalize(feats, wav_lens, epoch=current_epoch)
+    
+            # Forward pass through modules
+            src = self.modules.CNN(feats)
+            enc_out, pred = self.modules.Transformer(
+                src, tokens_bos, wav_lens, pad_idx=self.hparams.pad_index,
+            )
+            logits = self.modules.ctc_lin(enc_out)
+            p_ctc = self.hparams.log_softmax(logits)
+    
+            # Convert log probabilities to probabilities safely
+            epsilon = 1e-10  # Small constant to avoid numerical issues
+            p_ctc_np = torch.exp(p_ctc).detach().cpu().numpy()
+            p_ctc_np = np.clip(p_ctc_np, epsilon, None)  # Ensure no zeros
+    
+            # Normalize probabilities row-wise
             row_sums = np.sum(p_ctc_np, axis=1, keepdims=True)
-
-        p_ctc_np = p_ctc_np / row_sums  # Normalize rows
-        p_ctc_np = np.clip(p_ctc_np, epsilon, 1.0 - epsilon)  # Avoid log(0)
-
-        # Compute characteristics
-        entropy_vals = -np.sum(p_ctc_np * np.log(p_ctc_np), axis=1)
-        measurements['Entropy mean'].append(np.mean(entropy_vals))
-        measurements['Entropy max'].append(np.max(entropy_vals))
-        measurements['Entropy min'].append(np.min(entropy_vals))
-        measurements['Entropy median'].append(np.median(entropy_vals))
-
-        max_prob = np.max(p_ctc_np, axis=1)
-        measurements['Max mean'].append(np.mean(max_prob))
-        measurements['Max max'].append(np.max(max_prob))
-        measurements['Max min'].append(np.min(max_prob))
-        measurements['Max median'].append(np.median(max_prob))
-
-        min_prob = np.min(p_ctc_np, axis=1)
-        measurements['Min mean'].append(np.mean(min_prob))
-        measurements['Min max'].append(np.max(min_prob))
-        measurements['Min min'].append(np.min(min_prob))
-        measurements['Min median'].append(np.median(min_prob))
-
-        median_prob = np.median(p_ctc_np, axis=1)
-        measurements['Median mean'].append(np.mean(median_prob))
-        measurements['Median max'].append(np.max(median_prob))
-        measurements['Median min'].append(np.min(median_prob))
-        measurements['Median median'].append(np.median(median_prob))
-
-        # JSD computation
-        jsds = []
-        for i in range(p_ctc_np.shape[0] - 1):
-            p = p_ctc_np[i]
-            q = p_ctc_np[i + 1]
-            m = 0.5 * (p + q)
-            jsd = 0.5 * (np.sum(p * np.log(p / m)) + np.sum(q * np.log(q / m)))
-            jsds.append(jsd)
-        if jsds:
-            measurements['JSD mean'].append(np.mean(jsds))
-            measurements['JSD max'].append(np.max(jsds))
-            measurements['JSD min'].append(np.min(jsds))
-            measurements['JSD median'].append(np.median(jsds))
-
-        # KLD computation
-        klds = []
-        for i in range(p_ctc_np.shape[0] - 1):
-            p = p_ctc_np[i]
-            q = p_ctc_np[i + 1]
-            kld = np.sum(p * np.log(p / q))
-            klds.append(kld)
-        if klds:
-            measurements['KLD mean'].append(np.mean(klds))
-            measurements['KLD max'].append(np.max(klds))
-            measurements['KLD min'].append(np.min(klds))
-            measurements['KLD median'].append(np.median(klds))
-
-    except Exception as e:
-        print(f"Error during computation: {str(e)}")
+            mask = row_sums < epsilon
+            if np.any(mask):
+                # Replace invalid rows with uniform distribution
+                uniform_prob = 1.0 / p_ctc_np.shape[1]
+                p_ctc_np[mask.flatten()] = uniform_prob
+                row_sums = np.sum(p_ctc_np, axis=1, keepdims=True)
+    
+            p_ctc_np = p_ctc_np / row_sums  # Normalize rows
+            p_ctc_np = np.clip(p_ctc_np, epsilon, 1.0 - epsilon)  # Avoid log(0)
+    
+            # Compute characteristics
+            entropy_vals = -np.sum(p_ctc_np * np.log(p_ctc_np), axis=1)
+            measurements['Entropy mean'].append(np.mean(entropy_vals))
+            measurements['Entropy max'].append(np.max(entropy_vals))
+            measurements['Entropy min'].append(np.min(entropy_vals))
+            measurements['Entropy median'].append(np.median(entropy_vals))
+    
+            max_prob = np.max(p_ctc_np, axis=1)
+            measurements['Max mean'].append(np.mean(max_prob))
+            measurements['Max max'].append(np.max(max_prob))
+            measurements['Max min'].append(np.min(max_prob))
+            measurements['Max median'].append(np.median(max_prob))
+    
+            min_prob = np.min(p_ctc_np, axis=1)
+            measurements['Min mean'].append(np.mean(min_prob))
+            measurements['Min max'].append(np.max(min_prob))
+            measurements['Min min'].append(np.min(min_prob))
+            measurements['Min median'].append(np.median(min_prob))
+    
+            median_prob = np.median(p_ctc_np, axis=1)
+            measurements['Median mean'].append(np.mean(median_prob))
+            measurements['Median max'].append(np.max(median_prob))
+            measurements['Median min'].append(np.min(median_prob))
+            measurements['Median median'].append(np.median(median_prob))
+    
+            # JSD computation
+            jsds = []
+            for i in range(p_ctc_np.shape[0] - 1):
+                p = p_ctc_np[i]
+                q = p_ctc_np[i + 1]
+                m = 0.5 * (p + q)
+                jsd = 0.5 * (np.sum(p * np.log(p / m)) + np.sum(q * np.log(q / m)))
+                jsds.append(jsd)
+            if jsds:
+                measurements['JSD mean'].append(np.mean(jsds))
+                measurements['JSD max'].append(np.max(jsds))
+                measurements['JSD min'].append(np.min(jsds))
+                measurements['JSD median'].append(np.median(jsds))
+    
+            # KLD computation
+            klds = []
+            for i in range(p_ctc_np.shape[0] - 1):
+                p = p_ctc_np[i]
+                q = p_ctc_np[i + 1]
+                kld = np.sum(p * np.log(p / q))
+                klds.append(kld)
+            if klds:
+                measurements['KLD mean'].append(np.mean(klds))
+                measurements['KLD max'].append(np.max(klds))
+                measurements['KLD min'].append(np.min(klds))
+                measurements['KLD median'].append(np.median(klds))
+    
+        except Exception as e:
+            print(f"Error during computation: {str(e)}")
 
     def on_evaluate_start(self, max_key=None, min_key=None):
         """perform checkpoint averge if needed"""
