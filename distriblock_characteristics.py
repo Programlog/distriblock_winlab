@@ -30,67 +30,113 @@ logger = logging.getLogger(__name__)
 
 # Define training procedure
 class ASR(sb.core.Brain):
-    def compute_forward(self, batch, stage):
-        """Forward computations from the waveform batches to the output probabilities."""
-        batch = batch.to(self.device)
-        wavs, wav_lens = batch.sig
-        tokens_bos, _ = batch.tokens_bos
+def compute_characteristics(self, wavs, wav_lens, tokens_bos, measurements):
+    """
+    Computes characteristics metrics for the given input data.
 
-        # Add augmentation if specified
-        if stage == sb.Stage.TRAIN:
-            if hasattr(self.modules, "env_corrupt"):
-                wavs_noise = self.modules.env_corrupt(wavs, wav_lens)
-                wavs = torch.cat([wavs, wavs_noise], dim=0)
-                wav_lens = torch.cat([wav_lens, wav_lens])
-                tokens_bos = torch.cat([tokens_bos, tokens_bos], dim=0)
+    Args:
+        wavs (torch.Tensor): Input waveforms.
+        wav_lens (torch.Tensor): Lengths of waveforms as a proportion of the max length.
+        tokens_bos (torch.Tensor): Tokens with beginning-of-sequence marker.
+        measurements (dict): Dictionary to store computed metrics.
 
-        # compute features
+    Returns:
+        None
+    """
+    try:
+        # Compute features
         feats = self.hparams.compute_features(wavs)
         current_epoch = self.hparams.epoch_counter.current
 
-        # Move all modules to the same device
+        # Move modules’ normalize statistics to the correct device if needed
         self.modules.to(self.device)
-        # Move normalize statistics to the same device
         if hasattr(self.modules.normalize, "glob_mean"):
             self.modules.normalize.glob_mean = self.modules.normalize.glob_mean.to(self.device)
         if hasattr(self.modules.normalize, "glob_std"):
             self.modules.normalize.glob_std = self.modules.normalize.glob_std.to(self.device)
 
+        # Normalize features
         feats = self.modules.normalize(feats, wav_lens, epoch=current_epoch)
 
-        if stage == sb.Stage.TRAIN:
-            if hasattr(self.hparams, "augmentation"):
-                feats = self.hparams.augmentation(feats)
-
-        # forward modules
+        # Forward pass through modules
         src = self.modules.CNN(feats)
-
         enc_out, pred = self.modules.Transformer(
             src, tokens_bos, wav_lens, pad_idx=self.hparams.pad_index,
         )
-
-        # output layer for ctc log-probabilities
         logits = self.modules.ctc_lin(enc_out)
         p_ctc = self.hparams.log_softmax(logits)
 
-        # output layer for seq2seq log-probabilities
-        pred = self.modules.seq_lin(pred)
-        p_seq = self.hparams.log_softmax(pred)
+        # Convert log probabilities to probabilities safely
+        epsilon = 1e-10  # Small constant to avoid numerical issues
+        p_ctc_np = torch.exp(p_ctc).detach().cpu().numpy()
+        p_ctc_np = np.clip(p_ctc_np, epsilon, None)  # Ensure no zeros
 
-        # Compute outputs
-        hyps = None
-        if stage == sb.Stage.TRAIN :
-            hyps = None
-        elif stage == sb.Stage.VALID:
-            hyps = None
-            current_epoch = self.hparams.epoch_counter.current
-            if current_epoch % self.hparams.valid_search_interval == 0:
-                # for the sake of efficiency, we only perform beamsearch with limited capacity
-                # and no LM to give user some idea of how the AM is doing
-                hyps, _ = self.hparams.valid_search(enc_out.detach(), wav_lens)
-        elif stage == sb.Stage.TEST:
-            hyps, _ = self.hparams.test_search(enc_out.detach(), wav_lens)
-        return p_ctc, p_seq, wav_lens, hyps
+        # Normalize probabilities row-wise
+        row_sums = np.sum(p_ctc_np, axis=1, keepdims=True)
+        mask = row_sums < epsilon
+        if np.any(mask):
+            # Replace invalid rows with uniform distribution
+            uniform_prob = 1.0 / p_ctc_np.shape[1]
+            p_ctc_np[mask.flatten()] = uniform_prob
+            row_sums = np.sum(p_ctc_np, axis=1, keepdims=True)
+
+        p_ctc_np = p_ctc_np / row_sums  # Normalize rows
+        p_ctc_np = np.clip(p_ctc_np, epsilon, 1.0 - epsilon)  # Avoid log(0)
+
+        # Compute characteristics
+        entropy_vals = -np.sum(p_ctc_np * np.log(p_ctc_np), axis=1)
+        measurements['Entropy mean'].append(np.mean(entropy_vals))
+        measurements['Entropy max'].append(np.max(entropy_vals))
+        measurements['Entropy min'].append(np.min(entropy_vals))
+        measurements['Entropy median'].append(np.median(entropy_vals))
+
+        max_prob = np.max(p_ctc_np, axis=1)
+        measurements['Max mean'].append(np.mean(max_prob))
+        measurements['Max max'].append(np.max(max_prob))
+        measurements['Max min'].append(np.min(max_prob))
+        measurements['Max median'].append(np.median(max_prob))
+
+        min_prob = np.min(p_ctc_np, axis=1)
+        measurements['Min mean'].append(np.mean(min_prob))
+        measurements['Min max'].append(np.max(min_prob))
+        measurements['Min min'].append(np.min(min_prob))
+        measurements['Min median'].append(np.median(min_prob))
+
+        median_prob = np.median(p_ctc_np, axis=1)
+        measurements['Median mean'].append(np.mean(median_prob))
+        measurements['Median max'].append(np.max(median_prob))
+        measurements['Median min'].append(np.min(median_prob))
+        measurements['Median median'].append(np.median(median_prob))
+
+        # JSD computation
+        jsds = []
+        for i in range(p_ctc_np.shape[0] - 1):
+            p = p_ctc_np[i]
+            q = p_ctc_np[i + 1]
+            m = 0.5 * (p + q)
+            jsd = 0.5 * (np.sum(p * np.log(p / m)) + np.sum(q * np.log(q / m)))
+            jsds.append(jsd)
+        if jsds:
+            measurements['JSD mean'].append(np.mean(jsds))
+            measurements['JSD max'].append(np.max(jsds))
+            measurements['JSD min'].append(np.min(jsds))
+            measurements['JSD median'].append(np.median(jsds))
+
+        # KLD computation
+        klds = []
+        for i in range(p_ctc_np.shape[0] - 1):
+            p = p_ctc_np[i]
+            q = p_ctc_np[i + 1]
+            kld = np.sum(p * np.log(p / q))
+            klds.append(kld)
+        if klds:
+            measurements['KLD mean'].append(np.mean(klds))
+            measurements['KLD max'].append(np.max(klds))
+            measurements['KLD min'].append(np.min(klds))
+            measurements['KLD median'].append(np.median(klds))
+
+    except Exception as e:
+        print(f"Error during computation: {str(e)}")
 
     def on_evaluate_start(self, max_key=None, min_key=None):
         """perform checkpoint averge if needed"""
